@@ -1,9 +1,10 @@
 """Извлечение сущностей и связей из чанка. Требование FR-1."""
+
 import json
 
+from assistant.infra import schemas
 from assistant.infra.config import vocabulary
 from assistant.infra.grounding import CODE_TYPES, canonical_name, find_codes
-from assistant.infra.schemas import ENTITY_TYPES, EXTRACTION_SCHEMA, RELATION_SIGNATURES, Entity, Relation
 from assistant.infra.llm import LLMClient
 from assistant.infra.schemas import Chunk, ExtractionResult
 
@@ -23,12 +24,12 @@ def extract_chunk(chunk: Chunk, llm: LLMClient) -> ExtractionResult:
     names = vocabulary()
     directions = "\n".join(
         f"{subject_type} --{relation_type}--> {object_type}"
-        for relation_type, (subject_type, object_type) in RELATION_SIGNATURES.items()
+        for relation_type, (subject_type, object_type) in schemas.RELATION_SIGNATURES.items()
     )
     instruction = (
         "Извлеки из фрагмента сервисного документа сущности и связи.\n"
         "Включай только факты из фрагмента. Соблюдай направление каждой связи.\n"
-        f"Допустимые типы сущностей: {', '.join(ENTITY_TYPES)}.\n"
+        f"Допустимые типы сущностей: {', '.join(schemas.ENTITY_TYPES)}.\n"
         f"Допустимые направления связей:\n{directions}\n"
         f"Используй словарь для написания названий: {json.dumps(names, ensure_ascii=False)}.\n"
         "Связь FAILED обозначает отказ узла, зафиксированный в отчёте о выезде.\n"
@@ -58,7 +59,7 @@ def extract_chunk(chunk: Chunk, llm: LLMClient) -> ExtractionResult:
                 {"role": "system", "content": instruction + suffix},
                 {"role": "user", "content": chunk.text},
             ],
-            json_schema=EXTRACTION_SCHEMA,
+            json_schema=schemas.EXTRACTION_SCHEMA,
             max_tokens=4096,
         )
         try:
@@ -66,19 +67,19 @@ def extract_chunk(chunk: Chunk, llm: LLMClient) -> ExtractionResult:
         except (TypeError, ValueError, RecursionError):
             continue
 
-        if _matches_extraction_schema(payload, EXTRACTION_SCHEMA):
+        if _matches_extraction_schema(payload, schemas.EXTRACTION_SCHEMA):
             break
     else:
         return result
 
     chunk_codes = set(find_codes(chunk.text))
-    entities: dict[str, Entity] = {}
+    entities: dict[str, schemas.Entity] = {}
 
-    def confirmed_entity(entity_type: str, raw_name: str) -> Entity | None:
+    def confirmed_entity(entity_type: str, raw_name: str) -> schemas.Entity | None:
         name = canonical_name(entity_type, raw_name, names)
         if name is None or (entity_type in CODE_TYPES and name not in chunk_codes):
             return None
-        return Entity(type=entity_type, name=name)
+        return schemas.Entity(type=entity_type, name=name)
 
     for row in payload["entities"]:
         entity = confirmed_entity(row["type"], row["name"])
@@ -101,7 +102,7 @@ def extract_chunk(chunk: Chunk, llm: LLMClient) -> ExtractionResult:
             result.dropped += 1
             continue
 
-        relation = Relation(subject=subject, type=row["type"], object=target)
+        relation = schemas.Relation(subject=subject, type=row["type"], object=target)
         if not relation.matches_schema():
             result.dropped += 1
             continue
@@ -141,10 +142,10 @@ def extract_chunk(chunk: Chunk, llm: LLMClient) -> ExtractionResult:
                 if part is None:
                     continue
 
-                manual_relations = [Relation(subject=model, type="HAS_PART", object=part)]
+                manual_relations = [schemas.Relation(subject=model, type="HAS_PART", object=part)]
                 component = confirmed_entity("Component", component_name)
                 if component is not None:
-                    manual_relations.append(Relation(subject=part, type="IS_A", object=component))
+                    manual_relations.append(schemas.Relation(subject=part, type="IS_A", object=component))
 
                 for relation in manual_relations:
                     if relation in existing_relations:
@@ -159,7 +160,7 @@ def extract_chunk(chunk: Chunk, llm: LLMClient) -> ExtractionResult:
     return result
 
 
-def _reported_failure(chunk: Chunk, names: dict[str, list[str]]) -> Relation | None:
+def _reported_failure(chunk: Chunk, names: dict[str, list[str]]) -> schemas.Relation | None:
     """Извлекает подтверждённый отказ из полей отчёта о выезде."""
     if not chunk.doc_id.startswith("report_"):
         return None
@@ -181,10 +182,10 @@ def _reported_failure(chunk: Chunk, names: dict[str, list[str]]) -> Relation | N
     if model_name is None:
         return None
 
-    return Relation(
-        subject=Entity(type="Model", name=model_name),
+    return schemas.Relation(
+        subject=schemas.Entity(type="Model", name=model_name),
         type="FAILED",
-        object=Entity(type="Component", name=component_name),
+        object=schemas.Entity(type="Component", name=component_name),
     )
 
 

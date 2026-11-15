@@ -17,6 +17,7 @@ def local_search(question: str, kb: KnowledgeBase, llm: LLMClient) -> Answer:
     # TODO: опорные сущности, отбор фактов, запрос к модели, источники
     # raise NotImplementedError("Реализуйте local_search")
     from itertools import combinations, pairwise
+
     import networkx as nx
 
     from assistant.infra.grounding import code_type, find_codes, find_names
