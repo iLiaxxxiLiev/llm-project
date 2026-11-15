@@ -865,7 +865,8 @@
         "report_R-2025-006.md#0",
         "report_R-2025-009.md#0",
         "report_R-2025-023.md#0",
-        "report_R-2025-034.md#0"
+        "report_R-2025-034.md#0",
+        "report_R-2025-039.md#0"
       ]
     },
     {
@@ -1188,6 +1189,7 @@
       "sources": [
         "manual_GS-410.md#0",
         "report_R-2025-013.md#0",
+        "report_R-2025-019.md#0",
         "report_R-2025-031.md#0"
       ]
     },
@@ -1405,6 +1407,7 @@
       "name": "GS-520",
       "sources": [
         "manual_GS-520.md#0",
+        "report_R-2025-011.md#0",
         "report_R-2025-015.md#0",
         "report_R-2025-025.md#0"
       ]
@@ -2497,9 +2500,10 @@
       "type": "FAILED",
       "sources": [
         "report_R-2025-023.md#0",
-        "report_R-2025-034.md#0"
+        "report_R-2025-034.md#0",
+        "report_R-2025-039.md#0"
       ],
-      "weight": 2
+      "weight": 3
     },
     {
       "source": "Part:P-1110",
@@ -2827,9 +2831,10 @@
       "target": "Component:вентилятор испарителя",
       "type": "FAILED",
       "sources": [
+        "report_R-2025-005.md#0",
         "report_R-2025-014.md#0"
       ],
-      "weight": 1
+      "weight": 2
     },
     {
       "source": "Model:BZ-110",
@@ -3106,6 +3111,25 @@
     },
     {
       "source": "Model:BZ-120",
+      "target": "Component:нагреватель оттайки",
+      "type": "FAILED",
+      "sources": [
+        "report_R-2025-004.md#0"
+      ],
+      "weight": 1
+    },
+    {
+      "source": "Model:BZ-120",
+      "target": "Component:вентилятор испарителя",
+      "type": "FAILED",
+      "sources": [
+        "report_R-2025-016.md#0",
+        "report_R-2025-021.md#0"
+      ],
+      "weight": 2
+    },
+    {
+      "source": "Model:BZ-120",
       "target": "Component:компрессор",
       "type": "FAILED",
       "sources": [
@@ -3196,75 +3220,20 @@
     },
     {
       "source": "Model:BZ-210",
-      "target": "Component:компрессор",
-      "type": "FAILED",
-      "sources": [
-        "manual_BZ-210.md#1"
-      ],
-      "weight": 1
-    },
-    {
-      "source": "Model:BZ-210",
-      "target": "Component:вентилятор конденсатора",
-      "type": "FAILED",
-      "sources": [
-        "manual_BZ-210.md#1"
-      ],
-      "weight": 1
-    },
-    {
-      "source": "Model:BZ-210",
-      "target": "Component:датчик температуры",
-      "type": "FAILED",
-      "sources": [
-        "manual_BZ-210.md#1"
-      ],
-      "weight": 1
-    },
-    {
-      "source": "Model:BZ-210",
-      "target": "Component:контроллер",
-      "type": "FAILED",
-      "sources": [
-        "manual_BZ-210.md#1"
-      ],
-      "weight": 1
-    },
-    {
-      "source": "Model:BZ-210",
-      "target": "Component:реле давления",
-      "type": "FAILED",
-      "sources": [
-        "manual_BZ-210.md#1"
-      ],
-      "weight": 1
-    },
-    {
-      "source": "Model:BZ-210",
       "target": "Component:вентилятор испарителя",
       "type": "FAILED",
       "sources": [
-        "manual_BZ-210.md#1",
         "report_R-2025-008.md#0",
         "report_R-2025-017.md#0"
       ],
-      "weight": 3
+      "weight": 2
     },
     {
       "source": "Model:BZ-210",
       "target": "Component:нагреватель оттайки",
       "type": "FAILED",
       "sources": [
-        "manual_BZ-210.md#1"
-      ],
-      "weight": 1
-    },
-    {
-      "source": "Model:BZ-210",
-      "target": "Component:терморегулирующий вентиль",
-      "type": "FAILED",
-      "sources": [
-        "manual_BZ-210.md#1"
+        "report_R-2025-033.md#0"
       ],
       "weight": 1
     },
@@ -3424,7 +3393,17 @@
       "target": "Component:вентилятор испарителя",
       "type": "FAILED",
       "sources": [
+        "report_R-2025-020.md#0",
         "report_R-2025-038.md#0"
+      ],
+      "weight": 2
+    },
+    {
+      "source": "Model:BZ-220",
+      "target": "Component:нагреватель оттайки",
+      "type": "FAILED",
+      "sources": [
+        "report_R-2025-024.md#0"
       ],
       "weight": 1
     },
@@ -3508,6 +3487,16 @@
         "manual_GS-410.md#0"
       ],
       "weight": 1
+    },
+    {
+      "source": "Model:GS-410",
+      "target": "Component:циркуляционный насос",
+      "type": "FAILED",
+      "sources": [
+        "report_R-2025-013.md#0",
+        "report_R-2025-019.md#0"
+      ],
+      "weight": 2
     },
     {
       "source": "Model:GS-410",
@@ -3786,7 +3775,17 @@
       "target": "Component:циркуляционный насос",
       "type": "FAILED",
       "sources": [
+        "report_R-2025-007.md#0",
         "report_R-2025-018.md#0"
+      ],
+      "weight": 2
+    },
+    {
+      "source": "Model:GS-420",
+      "target": "Component:реле давления",
+      "type": "FAILED",
+      "sources": [
+        "report_R-2025-022.md#0"
       ],
       "weight": 1
     },
@@ -3885,7 +3884,17 @@
       "target": "Component:циркуляционный насос",
       "type": "FAILED",
       "sources": [
-        "report_R-2025-029.md#0"
+        "report_R-2025-029.md#0",
+        "report_R-2025-035.md#0"
+      ],
+      "weight": 2
+    },
+    {
+      "source": "Model:GS-510",
+      "target": "Component:датчик температуры",
+      "type": "FAILED",
+      "sources": [
+        "report_R-2025-032.md#0"
       ],
       "weight": 1
     },
@@ -4112,12 +4121,22 @@
     },
     {
       "source": "Model:GS-520",
+      "target": "Component:реле давления",
+      "type": "FAILED",
+      "sources": [
+        "report_R-2025-011.md#0"
+      ],
+      "weight": 1
+    },
+    {
+      "source": "Model:GS-520",
       "target": "Component:циркуляционный насос",
       "type": "FAILED",
       "sources": [
-        "report_R-2025-015.md#0"
+        "report_R-2025-015.md#0",
+        "report_R-2025-025.md#0"
       ],
-      "weight": 1
+      "weight": 2
     }
   ]
 }

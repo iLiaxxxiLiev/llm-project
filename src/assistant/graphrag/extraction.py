@@ -87,6 +87,13 @@ def extract_chunk(chunk: Chunk, llm: LLMClient) -> ExtractionResult:
             continue
         entities.setdefault(entity.node_id, entity)
 
+
+    failure = _reported_failure(chunk, names)
+    if failure is not None:
+        result.relations.append(failure)
+        for entity in (failure.subject, failure.object):
+            entities.setdefault(entity.node_id, entity)
+
     for row in payload["relations"]:
         subject = confirmed_entity(row["subject_type"], row["subject"])
         target = confirmed_entity(row["object_type"], row["object"])
@@ -97,6 +104,11 @@ def extract_chunk(chunk: Chunk, llm: LLMClient) -> ExtractionResult:
         relation = Relation(subject=subject, type=row["type"], object=target)
         if not relation.matches_schema():
             result.dropped += 1
+            continue
+
+        if relation.type == "FAILED":
+            if relation != failure:
+                result.dropped += 1
             continue
 
         result.relations.append(relation)
@@ -145,6 +157,35 @@ def extract_chunk(chunk: Chunk, llm: LLMClient) -> ExtractionResult:
 
     result.entities = list(entities.values())
     return result
+
+
+def _reported_failure(chunk: Chunk, names: dict[str, list[str]]) -> Relation | None:
+    """Извлекает подтверждённый отказ из полей отчёта о выезде."""
+    if not chunk.doc_id.startswith("report_"):
+        return None
+
+    model_codes: list[str] = []
+    component_name: str | None = None
+
+    for line in chunk.text.splitlines():
+        field, _, value = line.strip().partition(":")
+        if field == "Оборудование":
+            model_codes = find_codes(value.partition(".")[0])
+        elif field == "Диагностика показала отказ узла":
+            component_name = canonical_name("Component", value.partition(".")[0], names)
+
+    if len(model_codes) != 1 or component_name is None:
+        return None
+
+    model_name = canonical_name("Model", model_codes[0], names)
+    if model_name is None:
+        return None
+
+    return Relation(
+        subject=Entity(type="Model", name=model_name),
+        type="FAILED",
+        object=Entity(type="Component", name=component_name),
+    )
 
 
 def _matches_extraction_schema(payload: object, schema: dict) -> bool:
