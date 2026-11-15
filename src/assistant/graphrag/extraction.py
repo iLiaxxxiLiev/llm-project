@@ -41,6 +41,14 @@ def extract_chunk(chunk: Chunk, llm: LLMClient) -> ExtractionResult:
         '"object_type": "Component", "object": "пусковое реле"}]}'
     )
 
+
+    if chunk.doc_id.startswith("procedure_"):
+        instruction += (
+            "\nДля каждого кода ошибки, к которому явно применяется регламент, добавь связь FIXED_BY. "
+            "В subject запиши код ошибки, в subject_type — ErrorCode. "
+            "В object запиши код регламента из заголовка, в object_type — Procedure."
+        )
+
     result = ExtractionResult(chunk_id=chunk.chunk_id, doc_id=chunk.doc_id)
     correction = "\nИсправь формат ответа. Верни JSON по заданной схеме."
 
@@ -94,6 +102,46 @@ def extract_chunk(chunk: Chunk, llm: LLMClient) -> ExtractionResult:
         result.relations.append(relation)
         entities.setdefault(subject.node_id, subject)
         entities.setdefault(target.node_id, target)
+
+    if chunk.doc_id.startswith("manual_") and "## Состав узлов" in chunk.text:
+        title, _, body = chunk.text.partition("\n")
+        model_codes = find_codes(title)
+        model = confirmed_entity("Model", model_codes[0]) if len(model_codes) == 1 else None
+
+        if model is not None:
+            existing_relations = set(result.relations)
+            in_parts_section = False
+
+            for raw_line in body.splitlines():
+                line = raw_line.strip()
+                if line.startswith("## "):
+                    in_parts_section = line == "## Состав узлов"
+                    continue
+                if not in_parts_section or not line.startswith("- "):
+                    continue
+
+                component_name, separator, details = line[2:].partition(" – деталь ")
+                if not separator:
+                    continue
+
+                part_code = details.partition(",")[0]
+                part = confirmed_entity("Part", part_code)
+                if part is None:
+                    continue
+
+                manual_relations = [Relation(subject=model, type="HAS_PART", object=part)]
+                component = confirmed_entity("Component", component_name)
+                if component is not None:
+                    manual_relations.append(Relation(subject=part, type="IS_A", object=component))
+
+                for relation in manual_relations:
+                    if relation in existing_relations:
+                        continue
+
+                    result.relations.append(relation)
+                    existing_relations.add(relation)
+                    entities.setdefault(relation.subject.node_id, relation.subject)
+                    entities.setdefault(relation.object.node_id, relation.object)
 
     result.entities = list(entities.values())
     return result
