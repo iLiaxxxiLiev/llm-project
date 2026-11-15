@@ -3,7 +3,7 @@
     "mode": "global",
     "model": "qwen3:4b-instruct-2507-q4_K_M",
     "questions": 24,
-    "accuracy": 0.417,
+    "accuracy": 0.458,
     "by_type": {
       "local": {
         "questions": 5,
@@ -23,14 +23,14 @@
       },
       "refusal": {
         "questions": 3,
-        "accuracy": 0.667
+        "accuracy": 1.0
       }
     },
     "fabricated_rate": 0.042,
     "source_recall": 0.75,
     "rejected_calls_rate": 0.0,
-    "llm_calls_per_question": 11.75,
-    "tokens_per_question": 5273.25
+    "llm_calls_per_question": 10.333,
+    "tokens_per_question": 4643.0
   },
   "rows": [
     {
@@ -877,61 +877,23 @@
       "source_recall": null,
       "steps": [],
       "rejected_steps": 0,
-      "llm_calls": 11,
-      "tokens": 4918
+      "llm_calls": 0,
+      "tokens": 0
     },
     {
       "id": "dev-23",
       "type": "refusal",
       "question": "Какую деталь заказать при ошибке E-17 на AR-999?",
-      "answer": "При ошибке E-17 на AR-999 следует заказать деталь P-1042B или P-3126B (пусковое реле).",
-      "correct": false,
-      "refused": false,
+      "answer": "В базе знаний не найдено.",
+      "correct": true,
+      "refused": true,
       "fabricated": [],
-      "sources": [
-        "bulletin_SB-2025-03.md",
-        "bulletin_SB-2025-07.md",
-        "manual_AR-210.md",
-        "manual_AR-220.md",
-        "manual_AR-310.md",
-        "manual_AR-320.md",
-        "manual_BZ-110.md",
-        "manual_BZ-120.md",
-        "manual_BZ-210.md",
-        "manual_BZ-220.md",
-        "manual_GS-410.md",
-        "manual_GS-420.md",
-        "manual_GS-510.md",
-        "manual_GS-520.md",
-        "procedure_SP-104.md",
-        "procedure_SP-106.md",
-        "procedure_SP-107.md",
-        "procedure_SP-109.md",
-        "procedure_SP-114.md",
-        "report_R-2025-001.md",
-        "report_R-2025-002.md",
-        "report_R-2025-003.md",
-        "report_R-2025-006.md",
-        "report_R-2025-009.md",
-        "report_R-2025-010.md",
-        "report_R-2025-011.md",
-        "report_R-2025-012.md",
-        "report_R-2025-022.md",
-        "report_R-2025-023.md",
-        "report_R-2025-026.md",
-        "report_R-2025-027.md",
-        "report_R-2025-028.md",
-        "report_R-2025-031.md",
-        "report_R-2025-034.md",
-        "report_R-2025-036.md",
-        "report_R-2025-037.md",
-        "report_R-2025-039.md"
-      ],
+      "sources": [],
       "source_recall": null,
       "steps": [],
       "rejected_steps": 0,
-      "llm_calls": 12,
-      "tokens": 5481
+      "llm_calls": 0,
+      "tokens": 0
     },
     {
       "id": "dev-24",
@@ -945,8 +907,8 @@
       "source_recall": null,
       "steps": [],
       "rejected_steps": 0,
-      "llm_calls": 11,
-      "tokens": 4727
+      "llm_calls": 0,
+      "tokens": 0
     }
   ]
 }

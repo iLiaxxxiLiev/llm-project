@@ -131,9 +131,15 @@ def global_search(question: str, kb: KnowledgeBase, llm: LLMClient) -> Answer:
     # TODO: частичные ответы по сводкам, объединение
     # raise NotImplementedError("Реализуйте global_search")
     import json
+
+    from assistant.infra.grounding import code_type, find_codes
     from assistant.infra.schemas import MAP_SCHEMA
 
     not_found = "В базе знаний не найдено."
+
+    if any(f"{code_type(code)}:{code}" not in kb.graph for code in find_codes(question)):
+        return Answer(text=not_found, refused=True)
+
     partial_answers: list[str] = []
     sources: set[str] = set()
 
